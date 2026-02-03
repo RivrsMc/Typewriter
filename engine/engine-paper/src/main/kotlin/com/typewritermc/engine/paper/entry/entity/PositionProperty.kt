@@ -14,7 +14,7 @@ data class PositionProperty(
     override val pitch: Float,
 ) : EntityProperty, Point<PositionProperty>, Rotatable<PositionProperty>, WorldHolder<PositionProperty> {
     fun distanceSqrt(other: org.bukkit.Location): Double? {
-        if (world.identifier != other.world.uid.toString()) return null
+        if (world.name != other.world.name) return null
         return distanceSqrt(other.toPosition())
     }
 
@@ -70,7 +70,7 @@ data class PositionProperty(
 }
 
 fun org.bukkit.Location.toProperty(): PositionProperty {
-    return PositionProperty(World(world.uid.toString()), x, y, z, yaw, pitch)
+    return PositionProperty(World(world.name), x, y, z, yaw, pitch)
 }
 
 fun Position.toProperty(): PositionProperty {

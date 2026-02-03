@@ -22,7 +22,6 @@ import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.block.*
 import org.koin.java.KoinJavaComponent
-import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
 class PFInstanceSpace(val world: com.typewritermc.core.utils.point.World) : IInstanceSpace {
@@ -82,15 +81,15 @@ class PFInstanceSpace(val world: com.typewritermc.core.utils.point.World) : IIns
 
 @Singleton
 class InstanceSpaceCache : Initializable, Listener {
-    private val cache = ConcurrentHashMap<UUID, PFInstanceSpace>()
+    private val cache = ConcurrentHashMap<String, PFInstanceSpace>()
     private var job: Job? = null
 
     fun instanceSpace(world: World): PFInstanceSpace {
-        return cache.computeIfAbsent(world.uid) { PFInstanceSpace(world.toWorld()) }
+        return cache.computeIfAbsent(world.name) { PFInstanceSpace(world.toWorld()) }
     }
 
     fun instanceSpace(world: com.typewritermc.core.utils.point.World): PFInstanceSpace {
-        return cache.computeIfAbsent(UUID.fromString(world.identifier)) { PFInstanceSpace(world) }
+        return cache.computeIfAbsent(world.name) { PFInstanceSpace(world) }
     }
 
     override suspend fun initialize() {
@@ -133,7 +132,7 @@ class InstanceSpaceCache : Initializable, Listener {
 
     private fun onBlockEvent(event: BlockEvent) {
         val block = event.block
-        cache[block.world.uid]?.evict(block.x shr 4, block.z shr 4)
+        cache[block.world.name]?.evict(block.x shr 4, block.z shr 4)
     }
 
     override suspend fun shutdown() {

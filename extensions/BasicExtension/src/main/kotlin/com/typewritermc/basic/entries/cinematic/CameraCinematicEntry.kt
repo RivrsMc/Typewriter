@@ -396,8 +396,8 @@ private class DisplayCameraAction(
     }
 
     override suspend fun switchSegment(newSegment: CameraSegment) {
-        val oldWorld = path.first().position.world.identifier
-        val newWorld = newSegment.path.first().location.get(player).world.identifier
+        val oldWorld = path.first().position.world.name
+        val newWorld = newSegment.path.first().location.get(player).world.name
 
         setupPath(newSegment)
         if (oldWorld == newWorld) {

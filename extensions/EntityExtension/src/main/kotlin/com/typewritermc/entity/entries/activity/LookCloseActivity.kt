@@ -133,7 +133,7 @@ class LookCloseActivity(
         val shouldRefresh: Boolean
             get() {
                 if (!player.isValid) return true
-                if (player.location.world.uid.toString() != this@Target.position.world.identifier) return true
+                if (player.location.world.name != this@Target.position.world.name) return true
                 if (this@Target.position.distanceSquared(player.location.toProperty()) > playerLookCloseRange * playerLookCloseRange) return true
                 return System.currentTimeMillis() - lookupTime > 1000
             }
