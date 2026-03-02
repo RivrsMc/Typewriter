@@ -20,6 +20,7 @@ import com.typewritermc.engine.paper.logger
 import com.typewritermc.engine.paper.plugin
 import com.typewritermc.engine.paper.ui.CommunicationHandler
 import com.typewritermc.engine.paper.utils.asMini
+import com.typewritermc.engine.paper.utils.isFloodgate
 import com.typewritermc.engine.paper.utils.msg
 import com.typewritermc.engine.paper.utils.sendMini
 import com.typewritermc.loader.Extension
@@ -29,6 +30,7 @@ import com.typewritermc.loader.ExtensionLoader
 import kotlinx.coroutines.Dispatchers
 import net.kyori.adventure.inventory.Book
 import org.bukkit.command.CommandSender
+import org.bukkit.command.ConsoleCommandSender
 import org.bukkit.entity.Player
 import org.koin.java.KoinJavaComponent.get
 import java.time.format.DateTimeFormatter
@@ -414,6 +416,7 @@ private fun CommandTree.connectCommand() = literal("connect") {
             return@executes
         }
 
+
         val bookTitle = "<blue>Connect to the server</blue>".asMini()
         val bookAuthor = "<blue>Typewriter</blue>".asMini()
 
@@ -427,8 +430,37 @@ private fun CommandTree.connectCommand() = literal("connect") {
 				|<gray><i>Because of security reasons, this link will expire in 5 minutes.</i></gray>
 			""".trimMargin().asMini()
 
+        if (player.isFloodgate) {
+            sender.sendMessage(bookPage)
+            return@executes
+        }
+
         val book = Book.book(bookTitle, bookAuthor, bookPage)
         player.openBook(book)
+    }
+
+    playerResolver("target") { player ->
+        executes {
+            if (source.sender !is ConsoleCommandSender) {
+                sender.msg("You can only connect as other players from the console.")
+                return@executes
+            }
+            val targets = player().resolve(source)
+            if (targets.isEmpty()) {
+                sender.msg("No players found.")
+                return@executes
+            }
+
+            if (targets.size > 1) {
+                sender.msg("You can only connect as one player at a time.")
+                return@executes
+            }
+
+            val target = targets.first()
+
+            val url = communicationHandler.generateUrl(target.uniqueId)
+            sender.msg("Connect to<blue> $url </blue>to start the connection.")
+        }
     }
 }
 
