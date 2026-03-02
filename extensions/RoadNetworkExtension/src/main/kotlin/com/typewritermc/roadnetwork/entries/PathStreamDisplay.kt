@@ -184,7 +184,7 @@ interface PathStreamDisplay {
 
 private val pathStreamTimeout by snippet(
     "road_network.path_stream.timeout",
-    15_000,
+    3_000,
     "When path streams are forcefully canceled after this amount of time in milliseconds"
 )
 
