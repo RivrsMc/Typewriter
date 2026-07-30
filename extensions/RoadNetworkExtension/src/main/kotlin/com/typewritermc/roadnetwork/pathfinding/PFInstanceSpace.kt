@@ -35,9 +35,9 @@ class PFInstanceSpace(val world: com.typewritermc.core.utils.point.World) : IIns
 
         val columnarSpace = columnarSpaceAt(chunkX, chunkZ)
         val relativeX = x and 15
-        val relativeY = y and 15
+        val absoluteY = y
         val relativeZ = z and 15
-        return columnarSpace.blockAt(relativeX, relativeY, relativeZ)
+        return columnarSpace.blockAt(relativeX, absoluteY, relativeZ)
     }
 
     fun refresh(): Boolean {
