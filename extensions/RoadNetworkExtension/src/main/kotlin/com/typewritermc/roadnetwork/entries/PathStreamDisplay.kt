@@ -30,6 +30,7 @@ import com.typewritermc.roadnetwork.gps.PointToPointGPS
 import com.typewritermc.roadnetwork.gps.isInRangeOf
 import com.typewritermc.roadnetwork.pathfinding.PFEmptyEntity
 import com.typewritermc.roadnetwork.pathfinding.instanceSpace
+import com.typewritermc.roadnetwork.pathfinding.pathfindingYOffset
 import com.typewritermc.roadnetwork.roadNetworkMaxDistance
 import kotlinx.coroutines.*
 import kotlinx.coroutines.sync.Mutex
@@ -354,7 +355,10 @@ abstract class PathStreamProducer(
             distance > it.radius * it.radius && distance < roadNetworkMaxDistance * roadNetworkMaxDistance
         }
 
-        val entity = PFEmptyEntity(start.toProperty(), searchRange = roadNetworkMaxDistance.toFloat())
+        val entity = PFEmptyEntity(
+            start.add(0.0, pathfindingYOffset.toDouble(), 0.0).toProperty(),
+            searchRange = roadNetworkMaxDistance.toFloat()
+        )
         val instance = start.world.instanceSpace
         val pathfinder = HydrazinePathFinder(entity, instance)
 
@@ -368,10 +372,17 @@ abstract class PathStreamProducer(
             node.passibility()
         }
 
-        val path = pathfinder.computePathTo(Vec3d(end.x, end.y, end.z)) ?: return emptyList()
+        val path = pathfinder.computePathTo(
+            Vec3d(end.x, end.y + pathfindingYOffset, end.z)
+        ) ?: return emptyList()
         return path.map {
             val coordinate = it.coordinates()
-            Position(start.world, coordinate.x.toDouble(), coordinate.y.toDouble(), coordinate.z.toDouble())
+            Position(
+                start.world,
+                coordinate.x.toDouble(),
+                coordinate.y.toDouble() - pathfindingYOffset,
+                coordinate.z.toDouble()
+            )
         }
     }
 }

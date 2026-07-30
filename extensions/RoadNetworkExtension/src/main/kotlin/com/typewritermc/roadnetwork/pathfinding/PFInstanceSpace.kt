@@ -25,6 +25,8 @@ import org.koin.java.KoinJavaComponent
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
+const val pathfindingYOffset = 64
+
 class PFInstanceSpace(val world: com.typewritermc.core.utils.point.World) : IInstanceSpace {
     private val chunkSpaces = Long2ObjectOpenHashMap<PFColumnarSpace>()
     private var lastAccess = System.currentTimeMillis()
@@ -35,9 +37,9 @@ class PFInstanceSpace(val world: com.typewritermc.core.utils.point.World) : IIns
 
         val columnarSpace = columnarSpaceAt(chunkX, chunkZ)
         val relativeX = x and 15
-        val absoluteY = y
+        val virtualY = y
         val relativeZ = z and 15
-        return columnarSpace.blockAt(relativeX, absoluteY, relativeZ)
+        return columnarSpace.blockAt(relativeX, virtualY, relativeZ)
     }
 
     fun refresh(): Boolean {

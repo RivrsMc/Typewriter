@@ -17,10 +17,13 @@ class PFColumnarSpace(
 
     override fun blockAt(x: Int, y: Int, z: Int): PFBlock {
         lastAccess = System.currentTimeMillis()
+        val absoluteX = (snapshot.x shl 4) + x
+        val absoluteZ = (snapshot.z shl 4) + z
+        val absoluteY = y - pathfindingYOffset
         return PFBlock(
-            Position(world, x.toDouble(), y.toDouble(), z.toDouble(), 0f, 0f),
-            snapshot.getBlockType(x, y, z),
-            snapshot.getBlockData(x, y, z),
+            Position(world, absoluteX.toDouble(), absoluteY.toDouble(), absoluteZ.toDouble(), 0f, 0f),
+            snapshot.getBlockType(x, absoluteY, z),
+            snapshot.getBlockData(x, absoluteY, z),
         )
     }
 
