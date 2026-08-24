@@ -3,6 +3,8 @@ dependencies {
     compileOnly(project(":RoadNetworkExtension"))
     compileOnly(project(":QuestExtension"))
     testImplementation(kotlin("test"))
+    testImplementation("com.typewritermc:engine-core:0.9.0")
+    testImplementation(project(":RoadNetworkExtension"))
 }
 
 tasks.test {
@@ -24,7 +26,7 @@ typewriter {
             |please follow the [Installation Guide](https://docs.typewritermc.com/docs/getting-started/installation)
             |first.
         """.trimMargin()
-        engineVersion = file("../../version.txt").readText().trim()
+        engineVersion = "0.9.0-beta-170"
         channel = com.typewritermc.moduleplugin.ReleaseChannel.NONE
 
         dependencies {

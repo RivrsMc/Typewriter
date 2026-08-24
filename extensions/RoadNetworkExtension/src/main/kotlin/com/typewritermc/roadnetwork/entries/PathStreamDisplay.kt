@@ -27,6 +27,7 @@ import com.typewritermc.roadnetwork.RoadNetworkEntry
 import com.typewritermc.roadnetwork.RoadNetworkManager
 import com.typewritermc.roadnetwork.gps.GPSEdge
 import com.typewritermc.roadnetwork.gps.PointToPointGPS
+import com.typewritermc.roadnetwork.gps.fastTravelVisualPath
 import com.typewritermc.roadnetwork.gps.isInRangeOf
 import com.typewritermc.roadnetwork.pathfinding.PFEmptyEntity
 import com.typewritermc.roadnetwork.pathfinding.instanceSpace
@@ -339,7 +340,11 @@ abstract class PathStreamProducer(
         edges
             .map { edge ->
                 async {
-                    findPath(edge.start, edge.end)
+                    if (edge.isFastTravel) {
+                        edge.fastTravelVisualPath()
+                    } else {
+                        findPath(edge.start, edge.end)
+                    }
                 }
             }
             .awaitAll()

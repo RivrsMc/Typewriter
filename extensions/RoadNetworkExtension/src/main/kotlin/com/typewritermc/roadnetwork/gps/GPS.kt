@@ -6,6 +6,7 @@ import com.typewritermc.core.entries.Ref
 import com.typewritermc.core.utils.point.Position
 import com.typewritermc.core.utils.point.Vector
 import com.typewritermc.core.utils.point.distanceSqrt
+import com.typewritermc.core.utils.point.lerp
 import com.typewritermc.engine.paper.entry.entity.toProperty
 import com.typewritermc.roadnetwork.RoadNetworkEntry
 import com.typewritermc.roadnetwork.RoadNode
@@ -14,6 +15,8 @@ import com.typewritermc.roadnetwork.pathfinding.PFInstanceSpace
 import com.typewritermc.roadnetwork.pathfinding.instanceSpace
 import com.typewritermc.roadnetwork.pathfinding.pathfindingYOffset
 import com.typewritermc.roadnetwork.roadNetworkMaxDistance
+import kotlin.math.ceil
+import kotlin.math.sqrt
 
 interface GPS {
     val roadNetwork: Ref<RoadNetworkEntry>
@@ -31,6 +34,31 @@ data class GPSEdge(
 ) {
     val isFastTravel: Boolean
         get() = weight == 0.0
+}
+
+/**
+ * Builds a deterministic visual bridge for a fast-travel edge.
+ *
+ * Fast-travel connections deliberately bypass physical pathfinding. Path stream displays still need
+ * positions to render between both nodes, otherwise they try Hydrazine again and fail on the exact
+ * obstacle the manual connection was meant to cross (water, gaps, portals, ...).
+ *
+ * Cross-world edges cannot be represented as a continuous visual line and are therefore omitted.
+ */
+fun GPSEdge.fastTravelVisualPath(spacing: Double = 1.0): List<Position> {
+    require(spacing > 0.0) { "Fast-travel visual spacing must be positive" }
+    if (!isFastTravel || start.world != end.world) return emptyList()
+
+    val dx = end.x - start.x
+    val dy = end.y - start.y
+    val dz = end.z - start.z
+    val distance = sqrt(dx * dx + dy * dy + dz * dz)
+    if (distance == 0.0) return listOf(start)
+
+    val segments = ceil(distance / spacing).toInt().coerceAtLeast(1)
+    return (0..segments).map { index ->
+        start.lerp(end, index.toDouble() / segments)
+    }
 }
 
 fun roadNetworkFindPath(
