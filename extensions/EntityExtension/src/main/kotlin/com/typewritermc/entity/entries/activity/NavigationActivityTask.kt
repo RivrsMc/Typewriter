@@ -281,24 +281,14 @@ sealed interface NavigationActivityTaskState {
             val targetLookPoint = targetNode.coordinates().toVector().mid().let {
                 Vector(it.x, it.y.toPhysicalY(), it.z)
             }
-            val targetYaw = getLookYaw(targetLookPoint.x - location.x, targetLookPoint.z - location.z)
-            val targetPitch = getLookPitch(
+            return walkingLookRotation(
+                LookDirection(location.yaw, location.pitch),
                 targetLookPoint.x - location.x,
                 targetLookPoint.y - location.y,
-                targetLookPoint.z - location.z
+                targetLookPoint.z - location.z,
+                yawVelocity,
+                pitchVelocity,
             )
-            val currentYaw = if (location.yaw - targetYaw > 180) {
-                location.yaw - 360
-            } else if (location.yaw - targetYaw < -180) {
-                location.yaw + 360
-            } else {
-                location.yaw
-            }
-
-            val yaw = smoothDamp(currentYaw, targetYaw, yawVelocity, 0.2f)
-            val pitch = smoothDamp(location.pitch, targetPitch, pitchVelocity, 0.2f)
-
-            return yaw to pitch
         }
 
         override fun isComplete(): Boolean {
