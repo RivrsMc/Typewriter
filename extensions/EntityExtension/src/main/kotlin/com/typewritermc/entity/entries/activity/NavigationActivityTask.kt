@@ -25,6 +25,7 @@ import com.typewritermc.roadnetwork.gps.isInRangeOf
 import com.typewritermc.roadnetwork.gps.toVector
 import com.typewritermc.roadnetwork.pathfinding.PFCapabilities
 import com.typewritermc.roadnetwork.pathfinding.instanceSpace
+import com.typewritermc.roadnetwork.pathfinding.pathfindingYOffset
 import com.typewritermc.roadnetwork.roadNetworkMaxDistance
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -34,6 +35,10 @@ import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.min
 import kotlin.math.sin
+
+internal fun Double.toPathfindingY(): Double = this + pathfindingYOffset
+
+internal fun Double.toPhysicalY(): Double = this - pathfindingYOffset
 
 
 class NavigationActivity(
@@ -201,7 +206,7 @@ sealed interface NavigationActivityTaskState {
             }
 
 
-            path = navigator.computePathTo(edge.end.x, edge.end.y, edge.end.z)
+            path = navigator.computePathTo(edge.end.x, edge.end.y.toPathfindingY(), edge.end.z)
         }
 
         override fun position(): PositionProperty = location
@@ -212,8 +217,14 @@ sealed interface NavigationActivityTaskState {
         }
 
         override fun moveTo(position: Vec3d, passibility: Passibility?, gravitation: Gravitation?) {
-            val target =
-                PositionProperty(location.world, position.x, position.y, position.z, location.yaw, location.pitch)
+            val target = PositionProperty(
+                location.world,
+                position.x,
+                position.y.toPhysicalY(),
+                position.z,
+                location.yaw,
+                location.pitch,
+            )
 
             val velocity = calculateVelocity(target, capabilities().speed().toDouble())
             val result = calculateMovement(velocity)
@@ -267,7 +278,9 @@ sealed interface NavigationActivityTaskState {
         fun calculateRotation(): Pair<Float, Float> {
             val path = path ?: return Pair(location.yaw, location.pitch)
             val targetNode = path.at(min(path.cursor() + rotationLookAhead, path.length() - 1))
-            val targetLookPoint = targetNode.coordinates().toVector().mid()
+            val targetLookPoint = targetNode.coordinates().toVector().mid().let {
+                Vector(it.x, it.y.toPhysicalY(), it.z)
+            }
             val targetYaw = getLookYaw(targetLookPoint.x - location.x, targetLookPoint.z - location.z)
             val targetPitch = getLookPitch(
                 targetLookPoint.x - location.x,
@@ -293,7 +306,7 @@ sealed interface NavigationActivityTaskState {
             return (location.distanceSqrt(edge.end) ?: Double.POSITIVE_INFINITY) < 1
         }
 
-        override fun coordinates(): Vec3d = Vec3d(location.x, location.y, location.z)
+        override fun coordinates(): Vec3d = Vec3d(location.x, location.y.toPathfindingY(), location.z)
 
         // TODO: Make width and height configurable for each entity
         override fun width(): Float = 0.6f

@@ -2,6 +2,11 @@ repositories {}
 dependencies {
     compileOnly(project(":RoadNetworkExtension"))
     compileOnly(project(":QuestExtension"))
+    testImplementation(kotlin("test"))
+}
+
+tasks.test {
+    useJUnitPlatform()
 }
 
 typewriter {
