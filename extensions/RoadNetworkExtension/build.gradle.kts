@@ -1,6 +1,11 @@
 repositories {}
 dependencies {
     api("com.extollit.gaming:hydrazine-path-engine:1.8.1")
+    testImplementation(kotlin("test"))
+}
+
+tasks.test {
+    useJUnitPlatform()
 }
 
 typewriter {

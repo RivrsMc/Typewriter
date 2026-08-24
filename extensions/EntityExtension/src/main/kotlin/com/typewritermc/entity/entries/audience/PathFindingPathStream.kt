@@ -20,8 +20,18 @@ class PathFindingPathStreamProducer(
     endPosition: (Player) -> Position,
     refreshDuration: Duration,
     val speed: Double = 0.5,
-    displaySupplier: PathStreamDisplaysSupplier
-) : PathStreamProducer(player, id, roadNetwork, startPosition, endPosition, refreshDuration, displaySupplier) {
+    displaySupplier: PathStreamDisplaysSupplier,
+    maxActiveStreams: Int = Int.MAX_VALUE,
+) : PathStreamProducer(
+    player,
+    id,
+    roadNetwork,
+    startPosition,
+    endPosition,
+    refreshDuration,
+    displaySupplier,
+    maxActiveStreams,
+) {
     constructor(
         player: Player,
         ref: Ref<PathStreamDisplayEntry>,
@@ -30,7 +40,8 @@ class PathFindingPathStreamProducer(
         endPosition: (Player) -> Position,
         refreshDuration: Duration = Duration.ofMillis(1200),
         speed: Double = 0.5,
-        displayEntries: List<Ref<PathStreamDisplayEntry>>
+        displayEntries: List<Ref<PathStreamDisplayEntry>>,
+        maxActiveStreams: Int = Int.MAX_VALUE,
     ) : this(
         player,
         ref.id,
@@ -40,6 +51,7 @@ class PathFindingPathStreamProducer(
         refreshDuration,
         speed,
         { displayEntries.createDisplays(it) },
+        maxActiveStreams,
     )
 
     override suspend fun refreshPath(): PathStream? {

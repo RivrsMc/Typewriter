@@ -7,6 +7,7 @@ import com.typewritermc.core.entries.ref
 import com.typewritermc.core.extension.annotations.Default
 import com.typewritermc.core.extension.annotations.Entry
 import com.typewritermc.core.extension.annotations.Help
+import com.typewritermc.core.extension.annotations.Min
 import com.typewritermc.core.utils.point.Position
 import com.typewritermc.engine.paper.entry.entries.AudienceEntry
 import com.typewritermc.engine.paper.entry.entries.EntityDefinitionEntry
@@ -35,6 +36,10 @@ class AnimatedEntityPathStreamDisplayEntry(
     @Help("How fast the stream travels in blocks per second")
     @Default("0.3")
     val travelSpeed: Double = 0.3,
+    @Help("Maximum number of animated entities kept alive for this stream")
+    @Default("3")
+    @Min(1)
+    val maxActiveStreams: Int = 3,
     val definition: Ref<EntityDefinitionEntry> = emptyRef(),
 ) : PathStreamDisplayEntry {
     override fun createDisplay(player: Player): PathStreamDisplay? {
@@ -56,8 +61,8 @@ class AnimatedEntityPathStreamDisplayEntry(
             endPosition,
             refreshDuration,
             travelSpeed,
-            displays()
+            displays(),
+            maxActiveStreams,
         )
     }
 }
-

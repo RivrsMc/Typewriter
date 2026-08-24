@@ -224,6 +224,7 @@ abstract class PathStreamProducer(
     protected val endPosition: (Player) -> Position,
     protected val refreshDuration: Duration,
     protected val displaySupplier: PathStreamDisplaysSupplier,
+    protected val maxActiveStreams: Int = Int.MAX_VALUE,
 ) : KoinComponent {
 
     protected val roadNetworkManager: RoadNetworkManager by inject()
@@ -247,7 +248,9 @@ abstract class PathStreamProducer(
             job = Dispatchers.UntickedAsync.launch {
                 withTimeout(30.seconds) {
                     val stream = refreshPath() ?: return@withTimeout
-                    mutex.withLock { streams.add(stream) }
+                    mutex.withLock {
+                        streams.addBounded(stream, maxActiveStreams, PathStream::dispose)
+                    }
                 }
             }
         }
