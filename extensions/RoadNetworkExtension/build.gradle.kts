@@ -2,6 +2,7 @@ repositories {}
 dependencies {
     api("com.extollit.gaming:hydrazine-path-engine:1.8.1")
     testImplementation(kotlin("test"))
+    testImplementation("com.github.retrooper:packetevents-api:2.11.0")
 }
 
 tasks.test {

@@ -11,7 +11,6 @@ import com.typewritermc.engine.paper.content.ContentModeSwapTrigger
 import com.typewritermc.engine.paper.content.ContentPopTrigger
 import com.typewritermc.engine.paper.content.components.bossBar
 import com.typewritermc.engine.paper.content.components.exit
-import com.typewritermc.engine.paper.content.components.nodes
 import com.typewritermc.engine.paper.entry.forceTriggerFor
 import com.typewritermc.engine.paper.entry.triggerFor
 import com.typewritermc.roadnetwork.RoadNetworkEditorState
@@ -74,7 +73,7 @@ class SelectedNegativeNodeContentMode(
             }
         }
 
-        nodes({ network.negativeNodes }, ::showingPosition) {
+        roadNetworkNodes({ network.negativeNodes }, ::showingPosition) {
             item = ItemStack(Material.NETHERITE_BLOCK)
             glow = if (it.id == selectedNodeId) NamedTextColor.BLACK else null
             scale = Vector3f(0.5f, 0.5f, 0.5f)

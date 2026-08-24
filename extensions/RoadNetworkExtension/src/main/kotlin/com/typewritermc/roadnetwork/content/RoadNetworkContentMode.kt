@@ -83,7 +83,7 @@ class RoadNetworkContentMode(context: ContentContext, player: Player) : ContentM
             editorComponent.recalculateEdges()
         }
         +NetworkAddNodeComponent(::addRoadNode, ::addNegativeNode)
-        nodes({ network.nodes }, ::showingPosition) {
+        roadNetworkNodes({ network.nodes }, ::showingPosition) {
             item = ItemStack(it.material(network.modifications))
             glow = if (highlighting) NamedTextColor.WHITE else null
             scale = Vector3f(0.5f, 0.5f, 0.5f)
@@ -101,7 +101,7 @@ class RoadNetworkContentMode(context: ContentContext, player: Player) : ContentM
             }
         }
 
-        nodes({ network.negativeNodes }, ::showingPosition) {
+        roadNetworkNodes({ network.negativeNodes }, ::showingPosition) {
             item = ItemStack(Material.NETHERITE_BLOCK)
             glow = if (highlighting) NamedTextColor.BLACK else null
             scale = Vector3f(0.5f, 0.5f, 0.5f)

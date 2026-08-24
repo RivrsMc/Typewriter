@@ -99,7 +99,7 @@ class SelectedRoadNodeContentMode(
 
         +ModificationComponent(::selectedNode, ::network)
 
-        nodes({ network.nodes }, ::showingPosition) { node ->
+        roadNetworkNodes({ network.nodes }, ::showingPosition) { node ->
             item = ItemStack(node.material(network.modifications))
             glow = when {
                 node == selectedNode -> NamedTextColor.WHITE
@@ -122,7 +122,7 @@ class SelectedRoadNodeContentMode(
             onInteract { interactWithNode(node) }
         }
 
-        nodes({ network.negativeNodes }, ::showingPosition) {
+        roadNetworkNodes({ network.negativeNodes }, ::showingPosition) {
             item = ItemStack(Material.NETHERITE_BLOCK)
             glow = NamedTextColor.BLACK
             scale = Vector3f(0.5f, 0.5f, 0.5f)

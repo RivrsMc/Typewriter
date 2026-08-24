@@ -20,7 +20,6 @@ import com.typewritermc.core.utils.point.World
 import com.typewritermc.engine.paper.content.*
 import com.typewritermc.engine.paper.content.components.bossBar
 import com.typewritermc.engine.paper.content.components.exit
-import com.typewritermc.engine.paper.content.components.nodes
 import com.typewritermc.engine.paper.entry.entries.ArtifactEntry
 import com.typewritermc.engine.paper.entry.fieldValue
 import com.typewritermc.engine.paper.entry.triggerFor
@@ -30,6 +29,7 @@ import com.typewritermc.engine.paper.snippets.snippet
 import com.typewritermc.engine.paper.utils.playSound
 import com.typewritermc.roadnetwork.content.RoadNetworkEditorComponent
 import com.typewritermc.roadnetwork.content.material
+import com.typewritermc.roadnetwork.content.roadNetworkNodes
 import net.kyori.adventure.bossbar.BossBar
 import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.entity.Player
@@ -213,7 +213,7 @@ class SelectRoadNodeContentMode(context: ContentContext, player: Player) : Conte
             color = BossBar.Color.WHITE
         }
 
-        nodes({ network.nodes }, ::showingPosition) { node ->
+        roadNetworkNodes({ network.nodes }, ::showingPosition) { node ->
             item = ItemStack(node.material(network.modifications))
             glow = NamedTextColor.WHITE
             scale = Vector3f(0.5f, 0.5f, 0.5f)
@@ -270,7 +270,7 @@ class SelectRoadNodeCollectionContentMode(context: ContentContext, player: Playe
             color = BossBar.Color.WHITE
         }
 
-        nodes({ network.nodes }, ::showingPosition) { node ->
+        roadNetworkNodes({ network.nodes }, ::showingPosition) { node ->
             item = ItemStack(node.material(network.modifications))
             glow = when {
                 nodes.any { it.id == node.id.id } -> NamedTextColor.BLUE
